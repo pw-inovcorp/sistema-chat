@@ -26,6 +26,9 @@ class AuthenticatedSessionController extends Controller
     {
         $request->authenticate();
 
+        //Aqui mudamos o estado do user (depois mudo para websockest em tempo real)
+        auth()->user()->update(['status' => 'online']);
+
         $request->session()->regenerate();
 
         return redirect()->intended(route('dashboard', absolute: false));
@@ -36,7 +39,15 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+
+        $user = auth()->user();
+
         Auth::guard('web')->logout();
+
+        //Aqui mudamos o estado do user (depois mudo para websockest em tempo real)
+        if($user) {
+            $user->update(['status' => 'offline']);
+        }
 
         $request->session()->invalidate();
 
