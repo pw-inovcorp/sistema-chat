@@ -6,21 +6,18 @@
 
         <div class="flex justify-between items-center">
             <h2 class="font-semibold text-2xl text-gray-800">
-                {{ __('User Management') }}
+                {{ __('Users') }}
             </h2>
             <x-primary-button onclick="window.location='{{ route('admin.users.create') }}'">
-                {{ __('Create User') }}
+                {{ __('Criar User') }}
             </x-primary-button>
         </div>
-
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6 text-gray-900">
-
-
 
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-50 border-l-4 border-green-400 text-green-700">
@@ -31,6 +28,16 @@
                     @if (session('error'))
                         <div class="mb-4 p-4 bg-red-50 border-l-4 border-red-400 text-red-700">
                             {{ session('error') }}
+                        </div>
+                    @endif
+
+                    @if(auth()->user()->permission === 'admin')
+                        <div class="mb-4 p-4">
+                            <h4 class="font-medium text-blue-900 mb-2">Link de Convite</h4>
+                            <input type="text"
+                                   value="{{ route('invite.show', 'participar-no-chat') }}"
+                                   readonly
+                                   class="w-full text-sm border-gray-300 rounded-md bg-gray-50">
                         </div>
                     @endif
 
@@ -51,7 +58,7 @@
                                 <td class="border border-gray-300 px-4 py-3">{{ $user->email }}</td>
                                 <td class="border border-gray-300 px-4 py-3">
                                     @if($user->permission === 'admin')
-                                        <span class="bg-red-200 text-red-800 px-2 py-1 rounded text-sm font-medium">
+                                        <span class="bg-yellow-200 text-yellow-700 px-2 py-1 rounded text-sm font-medium">
                                                 Admin
                                             </span>
                                     @else

@@ -7,6 +7,12 @@ Route::get('/', function () {
     return view('welcome');
 });
 
+require __DIR__.'/auth.php';
+
+// Invite Routes simples
+Route::get('/invite/{token}', [App\Http\Controllers\InviteController::class, 'show'])->name('invite.show');
+Route::post('/invite/{token}', [App\Http\Controllers\InviteController::class, 'register'])->name('invite.register');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
