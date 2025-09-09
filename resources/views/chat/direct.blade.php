@@ -70,18 +70,25 @@
                         </div>
 
                         <div class="border-t p-4">
-                            <div class="flex space-x-4">
+                            <form method="POST" action="{{ route('chat.direct.send', $user) }}" class="flex space-x-2">
+                                @csrf
                                 <input type="text"
+                                       name="content"
                                        placeholder="Escreva algo..."
                                        class="flex-1 border border-gray-300 rounded-md px-3 py-2"
-                                       disabled>
-                                <button class="bg-blue-600 text-white px-4 py-2 rounded-md" disabled>
+                                       required
+                                       maxlength="500">
+                                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
                                     Enviar
                                 </button>
-                            </div>
-                        </div>
+                            </form>
 
+                            @error('content')
+                            <p class="text-red-500 text-xs mt-2">{{ $message }}</p>
+                            @enderror
+                        </div>
                     </div>
+
                 </div>
             </div>
         </div>

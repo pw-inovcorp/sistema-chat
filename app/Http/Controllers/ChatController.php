@@ -66,5 +66,39 @@ class ChatController extends Controller
 
         return view('chat/direct', ['rooms' => $rooms, 'onlineUsers' => $onlineUsers, 'messages' => $messages, 'user' => $user]);
     }
+
+    public function sendRoomMessage(Request $request, Room $room)
+    {
+        if (!$room->users()->where('user_id', auth()->id())->exists()) {
+            abort(403, 'Não tem permissão para entrar nesta sala');
+        }
+
+        $validated = $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $message = Message::create([
+            'content' => $validated['content'],
+            'user_id' => auth()->id(),
+            'room_id' => $room->id,
+        ]);
+
+        return redirect()->route('chat.room', $room);
+    }
+
+    public function sendDirectMessage(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'content' => 'required|string|max:500',
+        ]);
+
+        $message = Message::create([
+            'content' => $validated['content'],
+            'user_id' => auth()->id(),
+            'recipient_id' => $user->id,
+        ]);
+
+        return redirect()->route('chat.direct', $user);
+    }
 }
 
