@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class UserController extends Controller
 {
@@ -39,10 +40,15 @@ class UserController extends Controller
             'email' => 'required|string|email|max:50|unique:users',
             'password' => 'required|string|min:8|confirmed',
             'permission' => 'required|in:admin,user',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             //'status' => 'required|in:online,offline',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        if ($request->hasFile('avatar')) {
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
+        }
+
 
         User::create($validated);
 
@@ -73,10 +79,19 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         //
+
+//        if ($request->hasFile('avatar')) {
+//            dd(
+//                $request->file('avatar')->getMimeType(),
+//                $request->file('avatar')->getClientOriginalExtension()
+//            );
+//        }
+
         $validated = $request->validate([
             'name' => 'required|string|max:25',
             'email' => 'required|string|email|max:50|unique:users,email,' . $user->id,
             'permission' => 'required|in:admin,user',
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
             //'status' => 'required|in:online,offline',
         ]);
 
@@ -85,6 +100,14 @@ class UserController extends Controller
                 'password' => 'required|string|min:8|confirmed',
             ]);
             $validated['password'] = Hash::make($request->password);
+        }
+
+        if ($request->hasFile('avatar')) {
+            // Remover o avatar antigo se existir
+            if ($user->avatar) {
+                Storage::disk('public')->delete($user->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('avatars', 'public');
         }
 
         $user->update($validated);

@@ -44,9 +44,26 @@
                         </div>
 
                         <!-- WIP -->
-                        <div class="flex-1 overflow-y-auto ">
+                        <div class="flex-1 overflow-y-auto p-4 space-y-3">
                             @forelse($messages as $message)
-
+                                <div class="flex space-x-3">
+                                    @if($message->user->avatar)
+                                        <img src="{{ asset('storage/' . $message->user->avatar) }}"
+                                             alt="{{ $message->user->name }}"
+                                             class="w-8 h-8 rounded-full">
+                                    @else
+                                        <div class="w-8 h-8 bg-gray-300 rounded-full flex items-center justify-center text-xs font-medium">
+                                            {{ substr($message->user->name, 0, 1) }}
+                                        </div>
+                                    @endif
+                                    <div class="flex-1">
+                                        <div class="flex items-center space-x-2">
+                                            <span class="font-medium text-sm">{{ $message->user->name }}</span>
+                                            <span class="text-xs text-gray-500">{{ $message->created_at}}</span>
+                                        </div>
+                                        <p class="text-sm mt-1">{{ $message->content }}</p>
+                                    </div>
+                                </div>
                             @empty
                                 <div class="flex items-center justify-center h-full text-gray-500">
                                     <p>Sem mensagens no momento</p>

@@ -26,6 +26,13 @@
                         </div>
 
                         <div class="mb-4">
+                            <x-input-label for="avatar" :value="__('Avatar')" />
+                            <input id="avatar" class="block mt-1 w-full border border-gray-300 rounded-md px-3 py-2"  type="file" name="avatar" accept="image/*" />
+                            <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+                            <p class="text-xs text-gray-500 mt-1">Opcional. JPG, PNG, GIF até 2MB</p>
+                        </div>
+
+                        <div class="mb-4">
                             <x-input-label for="permission" :value="__('Permissão')" />
                             <select id="permission" name="permission" class="block mt-1 w-full border-gray-300 rounded-md">
                                 <option value="user" {{ old('permission') === 'user' ? 'selected' : '' }}>User</option>

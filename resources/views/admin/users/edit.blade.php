@@ -10,7 +10,7 @@
             <div class="bg-white shadow rounded-lg">
                 <div class="p-6">
 
-                    <form method="POST" action="{{ route('admin.users.update', $user) }}" class="space-y-4">
+                    <form method="POST" action="{{ route('admin.users.update', $user) }}" enctype="multipart/form-data" class="space-y-4">
                         @csrf
                         @method('PATCH')
 
@@ -24,6 +24,29 @@
                             <x-input-label for="email" :value="__('Email')" />
                             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email', $user->email)" required />
                             <x-input-error :messages="$errors->get('email')" class="mt-2" />
+                        </div>
+
+                        <div class="mb-4">
+                            <x-input-label for="avatar" :value="__('Avatar')" />
+
+                            @if($user->avatar)
+                                <div class="mb-3">
+                                    <p class="text-sm text-gray-600 mb-2">Avatar atual:</p>
+                                    <img src="{{ asset('storage/' . $user->avatar) }}"
+                                         alt="{{ $user->name }}"
+                                         class="w-16 h-16 rounded-full object-cover">
+                                </div>
+                            @endif
+
+                            <input id="avatar" class="block mt-1 w-full border border-gray-300 rounded-md px-3 py-2" type="file" name="avatar" accept="image/*" />
+                            <x-input-error :messages="$errors->get('avatar')" class="mt-2" />
+                            <p class="text-xs text-gray-500 mt-1">
+                                @if($user->avatar)
+                                    Deixa em branco para manter o avatar atual. JPG, PNG, GIF até 2MB
+                                @else
+                                    Opcional. JPG, PNG, GIF até 2MB
+                                @endif
+                            </p>
                         </div>
 
                         <div class="mb-4">
