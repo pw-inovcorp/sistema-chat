@@ -16,6 +16,11 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\AdminMiddleware::class,
         ]);
+
+        //Aqui aplicamos a todas as rotas do web http
+        $middleware->web(append: [
+            \App\Http\Middleware\UpdateUserPresence::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         //

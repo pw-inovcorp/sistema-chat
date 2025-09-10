@@ -24,6 +24,7 @@ class User extends Authenticatable
         'avatar',
         'permission',
         'status',
+        'last_seen'
     ];
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen' => 'datetime'
         ];
     }
 
@@ -64,4 +66,14 @@ class User extends Authenticatable
     {
         return $this->permission === 'admin';
     }
+
+    public function updateOnline()
+    {
+        $this->update([
+            'status' => 'online',
+            'last_seen' => now(),
+        ]);
+    }
+
+
 }
