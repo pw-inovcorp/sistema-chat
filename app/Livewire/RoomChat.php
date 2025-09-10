@@ -59,6 +59,7 @@ class RoomChat extends Component
     #[On('refresh-chat')]
     public function refreshChat()
     {
+
         $oldCount = count($this->messages);
         $this->loadMessages();
         $newCount = count($this->messages);
