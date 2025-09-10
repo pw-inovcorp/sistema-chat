@@ -3,32 +3,34 @@
 namespace App\Livewire;
 
 use Livewire\Component;
-use App\Models\Room;
+use App\Models\User;
 use App\Models\Message;
 use Livewire\Attributes\On;
 
-class RoomChat extends Component
+class DirectChat extends Component
 {
 
-    public $room;
+    public $user;
     public $newMessage = '';
     public $messages = [];
     public $messageInputKey = 0;
 
 
-    public function mount(Room $room)
+    public function mount(User $user)
     {
-        if (!$room->users()->where('user_id', auth()->id())->exists()) {
-            abort(403, 'Não tem permissão para entrar nesta sala');
-        }
-
-        $this->room = $room;
+        $this->user = $user;
         $this->loadMessages();
     }
 
     public function loadMessages()
     {
-        $this->messages = $this->room->messages()
+        $this->messages = Message::where(fn($q) => $q
+            ->where('user_id', auth()->id())
+            ->where('recipient_id', $this->user->id))
+            ->orWhere(fn($q) => $q
+                ->where('user_id', $this->user->id)
+                ->where('recipient_id', auth()->id())
+            )
             ->with('user')
             ->orderBy('created_at', 'asc')
             ->limit(100)
@@ -45,7 +47,8 @@ class RoomChat extends Component
         Message::create([
             'content' => $this->newMessage,
             'user_id' => auth()->id(),
-            'room_id' => $this->room->id,
+            'recipient_id' => $this->user->id,
+            'room_id' => null
         ]);
 
         $this->resetValidation();
@@ -70,6 +73,6 @@ class RoomChat extends Component
 
     public function render()
     {
-        return view('livewire/room-chat');
+        return view('livewire.direct-chat');
     }
 }

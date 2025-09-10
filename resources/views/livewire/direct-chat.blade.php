@@ -2,10 +2,7 @@
 
     <div class="border-b p-4 ">
         <div class="flex items-center justify-between">
-            <h3 class="font-semibold text-lg"># {{ $room->name }}</h3>
-            <div class="text-sm text-gray-500">
-                {{ $room->users()->count() }} membros
-            </div>
+            <h3 class="font-semibold text-lg">@ {{ $user->name }}</h3>
         </div>
     </div>
 
@@ -82,3 +79,4 @@
         }
     });
 </script>
+
