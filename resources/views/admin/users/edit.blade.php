@@ -30,11 +30,11 @@
                             <x-input-label for="avatar" :value="__('Avatar')" />
 
                             @if($user->avatar)
-                                <div class="mb-3">
+                                <div class="mb-4">
                                     <p class="text-sm text-gray-600 mb-2">Avatar atual:</p>
                                     <img src="{{ asset('storage/' . $user->avatar) }}"
                                          alt="{{ $user->name }}"
-                                         class="w-16 h-16 rounded-full object-cover">
+                                         class="w-16 h-16 object-cover">
                                 </div>
                             @endif
 

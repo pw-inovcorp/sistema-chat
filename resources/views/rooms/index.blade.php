@@ -55,6 +55,12 @@
                                             Sair
                                         </button>
                                     </form>
+                                    @if(auth()->user()->isAdmin())
+                                        <a href="{{ route('rooms.edit', $room) }}"
+                                           class="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700">
+                                            Editar
+                                        </a>
+                                    @endif
                                 </div>
                             </div>
                         @empty

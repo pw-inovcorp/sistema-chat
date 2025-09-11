@@ -55,10 +55,10 @@
 
                         <div class="flex items-center gap-3 pt-4">
                             <x-secondary-button onclick="window.location='{{ route('admin.users.index') }}'">
-                                {{ __('Cancel') }}
+                                {{ __('Cancelar') }}
                             </x-secondary-button>
                             <x-primary-button>
-                                {{ __('Create User') }}
+                                {{ __('Criar User') }}
                             </x-primary-button>
                         </div>
                     </form>

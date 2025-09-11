@@ -18,7 +18,8 @@ class UserController extends Controller
     {
         //
         $users = User::orderBy('created_at', 'desc')->paginate(10);
-        return view('admin/users/index', ['users' => $users]);
+        $token = \App\Http\Controllers\InviteController::getToken();
+        return view('admin/users/index', ['users' => $users, 'token' => $token]);
     }
 
     /**
@@ -129,6 +130,10 @@ class UserController extends Controller
         if ($user->id === auth()->id()) {
             return redirect()->route('admin.users.index')
                 ->with('error', 'Não pode remover a própria conta');
+        }
+
+        if ($user->avatar) {
+            Storage::disk('public')->delete($user->avatar);
         }
 
         $user->delete();

@@ -43,6 +43,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/rooms', [App\Http\Controllers\RoomController::class, 'store'])->name('rooms.store');
     Route::post('/rooms/{room}/join', [App\Http\Controllers\RoomController::class, 'join'])->name('rooms.join');
     Route::delete('/rooms/{room}/leave', [App\Http\Controllers\RoomController::class, 'leave'])->name('rooms.leave');
+    Route::get('/rooms/{room}/edit', [App\Http\Controllers\RoomController::class, 'edit'])->name('rooms.edit');
+    Route::patch('/rooms/{room}', [App\Http\Controllers\RoomController::class, 'update'])->name('rooms.update');
+    Route::delete('/rooms/{room}', [App\Http\Controllers\RoomController::class, 'destroy'])->name('rooms.destroy');
 });
 
 require __DIR__.'/auth.php';

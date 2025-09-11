@@ -24,7 +24,8 @@ class User extends Authenticatable
         'avatar',
         'permission',
         'status',
-        'last_seen'
+        'last_seen',
+        'invite_token_used'
     ];
 
     /**

@@ -17,7 +17,7 @@ class InviteController extends Controller
             return redirect()->route('login')->with('error', 'Link de convite inválido');
         }
 
-        return view('auth/register');
+        return view('auth/token-register',['token' => $token]);
     }
 
     public function register(Request $request, $token)
@@ -44,5 +44,10 @@ class InviteController extends Controller
         auth()->login($user);
 
         return redirect()->route('dashboard');
+    }
+
+    public static function getToken()
+    {
+        return self::TOKEN;
     }
 }

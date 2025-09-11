@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Room;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class RoomController extends Controller
 {
@@ -56,6 +57,8 @@ class RoomController extends Controller
 
         $room = Room::create($validated);
 
+        // Adicionar o criador automaticamente à sala
+        $room->users()->attach(auth()->id());
 
         return redirect()->route('rooms.index')
             ->with('success', 'Sala criada com sucesso');
@@ -105,6 +108,11 @@ class RoomController extends Controller
     public function edit(Room $room)
     {
         //
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Apenas admins podem editar salas');
+        }
+
+        return view('rooms/edit', ['room' => $room]);
     }
 
     /**
@@ -113,6 +121,27 @@ class RoomController extends Controller
     public function update(Request $request, Room $room)
     {
         //
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Apenas admins podem editar salas');
+        }
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:50|unique:rooms,name,' . $room->id,
+            'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048'
+        ]);
+
+        if ($request->hasFile('avatar')) {
+
+            if ($room->avatar) {
+                Storage::disk('public')->delete($room->avatar);
+            }
+            $validated['avatar'] = $request->file('avatar')->store('room-avatars', 'public');
+        }
+
+        $room->update($validated);
+
+        return redirect()->route('rooms.index')
+            ->with('success', "Sala '{$room->name}' atualizada");
     }
 
     /**
@@ -121,5 +150,19 @@ class RoomController extends Controller
     public function destroy(Room $room)
     {
         //
+        if (!auth()->user()->isAdmin()) {
+            abort(403, 'Apenas administradores podem deletar salas');
+        }
+
+        $roomName = $room->name;
+
+        if ($room->avatar) {
+            Storage::disk('public')->delete($room->avatar);
+        }
+
+        $room->delete();
+
+        return redirect()->route('rooms.index')
+            ->with('success', "Sala '{$roomName}' deletada");
     }
 }
