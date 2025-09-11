@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use App\Models\Room;
 
 class UserController extends Controller
 {
@@ -55,6 +56,8 @@ class UserController extends Controller
         return redirect()->route('admin.users.index')
             ->with('success', 'User creado com sucesso.');
     }
+
+
 
     /**
      * Display the specified resource.

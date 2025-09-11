@@ -37,6 +37,12 @@ Route::middleware('auth')->group(function () {
     Route::get('/chat/users/{user}', [ChatController::class, 'showDirectMessages'])->name('chat.direct');
     Route::post('/chat/rooms/{room}/messages', [ChatController::class, 'sendRoomMessage'])->name('chat.room.send');
     Route::post('/chat/users/{user}/messages', [ChatController::class, 'sendDirectMessage'])->name('chat.direct.send');
+
+    Route::get('/rooms', [App\Http\Controllers\RoomController::class, 'index'])->name('rooms.index');
+    Route::get('/rooms/create', [App\Http\Controllers\RoomController::class, 'create'])->name('rooms.create');
+    Route::post('/rooms', [App\Http\Controllers\RoomController::class, 'store'])->name('rooms.store');
+    Route::post('/rooms/{room}/join', [App\Http\Controllers\RoomController::class, 'join'])->name('rooms.join');
+    Route::delete('/rooms/{room}/leave', [App\Http\Controllers\RoomController::class, 'leave'])->name('rooms.leave');
 });
 
 require __DIR__.'/auth.php';

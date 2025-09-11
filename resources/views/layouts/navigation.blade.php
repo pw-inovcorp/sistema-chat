@@ -16,6 +16,10 @@
                         {{ __('Chat') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.index')">
+                        {{ __('Salas') }}
+                    </x-nav-link>
+
                     @if(auth()->user()->isAdmin())
                         <x-nav-link :href="route('admin.users.index')" :active="request()->routeIs('admin.users.index')">
                             {{ __('Users') }}
