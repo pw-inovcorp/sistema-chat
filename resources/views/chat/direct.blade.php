@@ -7,22 +7,33 @@
 
     <div class="py-6">
         <div class="max-w-7xl mx-auto px-4">
-            <div class="bg-white shadow-sm rounded-lg h-96">
+            <div class="bg-white shadow-sm rounded-lg h-128">
                 <div class="flex h-full">
 
                     <div class="w-80 border-r bg-gray-50 p-4">
                         <h3 class="font-semibold mb-3">Salas</h3>
-                        <div class="space-y-2 mb-6">
+                        <div class="space-y-2 mb-6 max-h-48 overflow-y-auto">
                             @foreach($rooms as $room)
                                 <a href="{{ route('chat.room', $room) }}"
-                                   class="block p-2 hover:bg-gray-100 rounded text-gray-700">
-                                    # {{ $room->name }}
+                                   class="p-2 hover:bg-gray-100 rounded text-gray-700 flex items-center">
+
+                                    @if($room->avatar)
+                                        <img src="{{ asset('storage/' . $room->avatar) }}"
+                                             alt="{{ $room->name }}"
+                                             class="w-7 h-7 rounded-full mr-2 object-cover">
+                                    @else
+                                        <div class="w-7 h-7 bg-gray-300 rounded-full flex items-center justify-center mr-2">
+                                            <span class="text-xs">#</span>
+                                        </div>
+                                    @endif
+
+                                    {{ $room->name }}
                                 </a>
                             @endforeach
                         </div>
 
                         <h3 class="font-semibold mb-3">Users Online</h3>
-                        <div class="space-y-2">
+                        <div class="max-h-40 overflow-y-auto p-2 space-y-2">
                             @foreach($onlineUsers as $u)
                                 <a href="{{ route('chat.direct', $u) }}"
                                    class="p-2 rounded flex items-center
@@ -89,6 +100,7 @@
 {{--                        </div>--}}
 {{--                    </div>--}}
                         @livewire('direct-chat', ['user' => $user])
+                    </div>
                 </div>
             </div>
         </div>

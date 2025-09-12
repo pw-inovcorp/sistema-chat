@@ -14,6 +14,10 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            spacing: {
+                '128': '32rem',  // h-128
+                '144': '36rem',  // h-144
+            },
         },
     },
 
