@@ -6,14 +6,18 @@ use Livewire\Component;
 use App\Models\User;
 use App\Models\Message;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class DirectChat extends Component
 {
+    use WithFileUploads;
 
     public $user;
     public $newMessage = '';
     public $messages = [];
     public $messageInputKey = 0;
+
+    public $selectedImage = null;
 
 
     public function mount(User $user)
@@ -40,23 +44,46 @@ class DirectChat extends Component
 
     public function sendMessage()
     {
-        $this->validate([
-            'newMessage' => 'required|string|max:500',
-        ]);
+        $rules = [];
 
-        Message::create([
-            'content' => $this->newMessage,
+        if ($this->selectedImage) {
+            $rules['selectedImage'] = 'required|image|mimes:jpeg,png,jpg,gif|max:5120';
+        } else {
+            $rules['newMessage'] = 'required|string|max:500';
+        }
+
+        $this->validate($rules);
+
+        $messageData = [
             'user_id' => auth()->id(),
             'recipient_id' => $this->user->id,
             'room_id' => null
-        ]);
+        ];
+
+        if ($this->selectedImage) {
+            $imagePath = $this->selectedImage->store('chat-images', 'public');
+            $messageData['image_path'] = $imagePath;
+            $messageData['message_type'] = 'image';
+            $messageData['content'] = $this->newMessage;
+        } else {
+            $messageData['content'] = $this->newMessage;
+            $messageData['message_type'] = 'text';
+        }
+
+        Message::create($messageData);
 
         $this->resetValidation();
         $this->newMessage = '';
+        $this->selectedImage = null;
         $this->messageInputKey++;
         $this->loadMessages();
 
         $this->dispatch('scroll-to-bottom');
+    }
+
+    public function removeImage()
+    {
+        $this->selectedImage = null;
     }
 
     #[On('refresh-chat')]

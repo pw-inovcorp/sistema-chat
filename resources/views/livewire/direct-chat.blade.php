@@ -6,8 +6,7 @@
         </div>
     </div>
 
-    <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-3"
-         style="max-height: calc(100vh - 200px);">
+    <div id="messages-container" class="flex-1 overflow-y-auto p-4 space-y-3 min-h-0">
 
         @forelse($messages as $message)
             <div class="flex {{ $message['user']['id'] === auth()->id() ? 'justify-end' : 'justify-start' }}">
@@ -22,14 +21,27 @@
                         </div>
                     @endif
 
-                    <div class="flex-1 max-w-xs {{ $message['user']['id'] === auth()->id() ? 'mr-3' : 'ml-3' }}">
+                    <div class="flex-1 max-w-sm {{ $message['user']['id'] === auth()->id() ? 'mr-3' : 'ml-3' }}">
                         <div class="flex items-center space-x-2 mb-1 {{ $message['user']['id'] === auth()->id() ? 'flex-row-reverse space-x-reverse' : '' }}">
                             <span class="font-medium text-sm">{{ $message['user']['name'] }}</span>
                             <span class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($message['created_at'])->format('d/m/Y H:i') }}</span>
                         </div>
-                        <p class="text-sm mt-1 bg-gray-200 p-2 rounded-lg text-black">
-                            {{ $message['content'] }}
-                        </p>
+                        @if($message['message_type'] === 'image')
+                            <div class="bg-gray-200 p-2 rounded-lg">
+                                <img src="{{ asset('storage/' . $message['image_path']) }}"
+                                     alt="Imagem enviada"
+                                     class="max-w-full h-auto rounded cursor-pointer">
+                                @if($message['content'])
+                                    <p class="text-xs text-gray-600 mt-1 break-words">{{ $message['content'] }}</p>
+                                @endif
+                            </div>
+                        @else
+                            @if($message['content'])
+                                <div class="bg-gray-200 p-2 rounded-lg max-w-full">
+                                    <p class="text-sm break-words">{{ $message['content'] }}</p>
+                                </div>
+                            @endif
+                        @endif
                     </div>
                 </div>
             </div>
@@ -41,13 +53,41 @@
     </div>
 
     <div class="border-t p-4">
+        @if($selectedImage)
+            <div class="mb-4 p-3 bg-gray-100 rounded-lg">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <img src="{{ $selectedImage->temporaryUrl() }}"
+                             alt="Preview"
+                             class="w-16 h-16  rounded">
+                        <span class="ml-3 text-sm text-gray-600">Imagem pronta para enviar</span>
+                    </div>
+                    <button wire:click="removeImage"
+                            class="text-red-600 hover:text-red-800">
+                        Remover
+                    </button>
+                </div>
+            </div>
+        @endif
+
         <form wire:submit="sendMessage" class="flex space-x-4">
             <input type="text"
                    wire:model="newMessage"
                    wire:key="message-input-{{ $messageInputKey }}"
-                   placeholder="Escreva algo..."
+                   placeholder="{{ $selectedImage ? 'Comentário opcional...' : 'Escreva algo...' }}"
                    class="flex-1 border border-gray-300 rounded-lg px-4 py-2"
-                   autocomplete="off">
+                {{ $selectedImage ? '' : 'required' }}>
+
+            <input type="file"
+                   wire:model="selectedImage"
+                   accept="image/*"
+                   id="imageInput"
+                   class="hidden">
+
+            <label for="imageInput"
+                   class="cursor-pointer bg-gray-600 text-white px-3 py-2 rounded-lg hover:bg-gray-700">
+                Upload
+            </label>
 
             <button type="submit"
                     wire:loading.attr="disabled"
@@ -59,6 +99,10 @@
         </form>
 
         @error('newMessage')
+        <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
+        @enderror
+
+        @error('selectedImage')
         <p class="text-red-500 text-sm mt-2">{{ $message }}</p>
         @enderror
     </div>

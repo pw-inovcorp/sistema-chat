@@ -15,7 +15,9 @@ class Message extends Model
         'content',
         'user_id',
         'room_id',
-        'recipient_id'
+        'recipient_id',
+        'image_path',
+        'message_type'
     ];
 
     // Relações

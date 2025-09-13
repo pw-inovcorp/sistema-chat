@@ -90,13 +90,22 @@
                                         <p class="text-sm text-gray-500">{{ $room->users()->count() }} membros</p>
                                     </div>
                                 </div>
-                                <form method="POST" action="{{ route('rooms.join', $room) }}">
-                                    @csrf
-                                    <button type="submit"
-                                            class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
-                                        Entrar
-                                    </button>
-                                </form>
+                                <div class="flex space-x-2">
+                                    <form method="POST" action="{{ route('rooms.join', $room) }}">
+                                        @csrf
+                                        <button type="submit"
+                                                class="bg-green-600 text-sm text-white px-3 py-1 rounded hover:bg-green-700">
+                                            Entrar
+                                        </button>
+                                    </form>
+
+                                    @if(auth()->user()->isAdmin())
+                                        <a href="{{ route('rooms.edit', $room) }}"
+                                           class="bg-gray-600 text-white px-3 py-1 rounded text-sm hover:bg-gray-700">
+                                            Editar
+                                        </a>
+                                    @endif
+                                </div>
                             </div>
                         @empty
                             <p class="text-gray-500 text-center py-4">Não há salas disponíveis no momento.</p>

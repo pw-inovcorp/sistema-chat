@@ -6,15 +6,17 @@ use Livewire\Component;
 use App\Models\Room;
 use App\Models\Message;
 use Livewire\Attributes\On;
+use Livewire\WithFileUploads;
 
 class RoomChat extends Component
 {
+    use WithFileUploads;
 
     public $room;
     public $newMessage = '';
     public $messages = [];
     public $messageInputKey = 0;
-
+    public $selectedImage = null;
 
     public function mount(Room $room)
     {
@@ -38,22 +40,46 @@ class RoomChat extends Component
 
     public function sendMessage()
     {
-        $this->validate([
-            'newMessage' => 'required|string|max:500',
-        ]);
+        $rules = [];
 
-        Message::create([
-            'content' => $this->newMessage,
+        if ($this->selectedImage) {
+            $rules['selectedImage'] = 'required|image|mimes:jpeg,png,jpg,gif|max:5120'; // 5MB
+        } else {
+            $rules['newMessage'] = 'required|string|max:500';
+        }
+
+        $this->validate($rules);
+
+        $messageData = [
             'user_id' => auth()->id(),
             'room_id' => $this->room->id,
-        ]);
+        ];
+
+        if ($this->selectedImage) {
+
+            $imagePath = $this->selectedImage->store('chat-images', 'public');
+            $messageData['image_path'] = $imagePath;
+            $messageData['message_type'] = 'image';
+            $messageData['content'] = $this->newMessage;
+        } else {
+            $messageData['content'] = $this->newMessage;
+            $messageData['message_type'] = 'text';
+        }
+
+        Message::create($messageData);
 
         $this->resetValidation();
         $this->newMessage = '';
+        $this->selectedImage = null;
         $this->messageInputKey++;
         $this->loadMessages();
 
         $this->dispatch('scroll-to-bottom');
+    }
+
+    public function removeImage()
+    {
+        $this->selectedImage = null;
     }
 
     #[On('refresh-chat')]
